@@ -223,13 +223,38 @@ Complete!
 [root@k8-node1 ~]# 
 ```
 
-Now lets check docker version:
+Now lets check docker version and start the services:
 ```
 [root@k8-node1 ~]# docker --version
 Docker version 27.3.1, build ce12230
 [root@k8-node1 ~]# systemctl enable docker
 Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /usr/lib/systemd/system/docker.service.
 [root@k8-node1 ~]# 
+[root@k8-node1 ~]# systemctl enable docker
+Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /usr/lib/systemd/system/docker.service.
+[root@k8-node1 ~]# systemctl start docker
+[root@k8-node1 ~]# systemctl status docker
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)
+   Active: active (running) since Sat 2024-11-16 22:28:56 EST; 5s ago
+     Docs: https://docs.docker.com
+ Main PID: 47524 (dockerd)
+    Tasks: 8
+   Memory: 20.7M
+   CGroup: /system.slice/docker.service
+           └─47524 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+Nov 16 22:28:55 k8-node1.localdomain dockerd[47524]: time="2024-11-16T22:28:55.195396987-05:00" level=info msg="Loading containers: start."     
+Nov 16 22:28:56 k8-node1.localdomain dockerd[47524]: time="2024-11-16T22:28:56.391139518-05:00" level=info msg="Firewalld: interface docker0 al>
+Nov 16 22:28:56 k8-node1.localdomain dockerd[47524]: time="2024-11-16T22:28:56.615002234-05:00" level=info msg="Loading containers: done."      
+Nov 16 22:28:56 k8-node1.localdomain dockerd[47524]: time="2024-11-16T22:28:56.627408351-05:00" level=warning msg="Not using native diff for ov>
+Nov 16 22:28:56 k8-node1.localdomain dockerd[47524]: time="2024-11-16T22:28:56.627517071-05:00" level=warning msg="WARNING: bridge-nf-call-ipta>
+Nov 16 22:28:56 k8-node1.localdomain dockerd[47524]: time="2024-11-16T22:28:56.627528372-05:00" level=warning msg="WARNING: bridge-nf-call-ip6t>
+Nov 16 22:28:56 k8-node1.localdomain dockerd[47524]: time="2024-11-16T22:28:56.627543124-05:00" level=info msg="Docker daemon" commit=41ca978 c>
+Nov 16 22:28:56 k8-node1.localdomain dockerd[47524]: time="2024-11-16T22:28:56.627806547-05:00" level=info msg="Daemon has completed initializa>
+Nov 16 22:28:56 k8-node1.localdomain dockerd[47524]: time="2024-11-16T22:28:56.665464262-05:00" level=info msg="API listen on /run/docker.sock" 
+Nov 16 22:28:56 k8-node1.localdomain systemd[1]: Started Docker Application Container Engine.
+[root@k8-node1 ~]#
 ```
 
 Now we will setup KubeCtl, and this can be done in two ways one by downloading the binaries other is by using package manager, here we will do both
@@ -320,4 +345,187 @@ kubectl: OK
 Client Version: v1.31.2
 Kustomize Version: v5.4.2
 [root@k8-node1 ~]# 
+```
+
+Now lets install MiniKube:
+
+We will install MiniKube both my binary as well as package method.
+```
+[root@k8-node1 ~]# curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 36.2M  100 36.2M    0     0  26.2M      0  0:00:01  0:00:01 --:--:-- 26.2M
+[root@k8-node1 ~]# rpm -Uvh minikube-latest.x86_64.rpm 
+Verifying...                          ################################# [100%]
+Preparing...                          ################################# [100%]
+Updating / installing...
+   1:minikube-1.34.0-0                ################################# [100%]
+/sbin/ldconfig: /etc/ld.so.conf.d/kernel-5.4.17-2102.201.3.el8uek.x86_64.conf:6: hwcap directive ignored
+[root@k8-node1 ~]# 
+[root@k8-node1 ~]# minikube version
+minikube version: v1.34.0
+commit: 210b148df93a80eb872ecbeb7e35281b3c582c61
+[root@k8-node1 ~]#
+```
+
+Binary Approach:
+```
+[root@k8-node1 ~]# 
+[root@k8-node1 ~]# curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 99.0M  100 99.0M    0     0  36.7M      0  0:00:02  0:00:02 --:--:-- 36.6M
+[root@k8-node1 ~]# 
+[root@k8-node1 ~]# install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+rm: remove regular file 'minikube-linux-amd64'? y
+[root@k8-node1 ~]# 
+[root@k8-node1 ~]# minikube version
+minikube version: v1.34.0
+commit: 210b148df93a80eb872ecbeb7e35281b3c582c61
+[root@k8-node1 ~]# 
+```
+
+And lets install conntrack
+```
+[root@k8-node1 ~]# yum install conntrack
+Last metadata expiration check: 0:14:24 ago on Sat 16 Nov 2024 10:10:40 PM EST.
+Dependencies resolved.
+================================================================================================================================================
+ Package                                   Architecture              Version                         Repository                            Size
+================================================================================================================================================
+Installing:
+ conntrack-tools                           x86_64                    1.4.4-11.el8                    ol8_baseos_latest                    204 k
+Installing dependencies:
+ libnetfilter_cthelper                     x86_64                    1.0.0-15.el8                    ol8_baseos_latest                     24 k
+ libnetfilter_cttimeout                    x86_64                    1.0.0-11.el8                    ol8_baseos_latest                     24 k
+ libnetfilter_queue                        x86_64                    1.0.4-3.el8                     ol8_baseos_latest                     31 k
+
+Transaction Summary
+================================================================================================================================================
+Install  4 Packages
+
+Total download size: 283 k
+Installed size: 702 k
+Is this ok [y/N]: y
+Downloading Packages:
+(1/4): libnetfilter_cthelper-1.0.0-15.el8.x86_64.rpm                                                            107 kB/s |  24 kB     00:00     
+(2/4): libnetfilter_cttimeout-1.0.0-11.el8.x86_64.rpm                                                           106 kB/s |  24 kB     00:00     
+(3/4): libnetfilter_queue-1.0.4-3.el8.x86_64.rpm                                                                689 kB/s |  31 kB     00:00     
+(4/4): conntrack-tools-1.4.4-11.el8.x86_64.rpm                                                                  716 kB/s | 204 kB     00:00     
+------------------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                           975 kB/s | 283 kB     00:00     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                                        1/1 
+  Installing       : libnetfilter_queue-1.0.4-3.el8.x86_64                                                                                  1/4 
+  Running scriptlet: libnetfilter_queue-1.0.4-3.el8.x86_64                                                                                  1/4 
+/sbin/ldconfig: /etc/ld.so.conf.d/kernel-5.4.17-2102.201.3.el8uek.x86_64.conf:6: hwcap directive ignored
+
+  Installing       : libnetfilter_cttimeout-1.0.0-11.el8.x86_64                                                                             2/4 
+  Running scriptlet: libnetfilter_cttimeout-1.0.0-11.el8.x86_64                                                                             2/4 
+/sbin/ldconfig: /etc/ld.so.conf.d/kernel-5.4.17-2102.201.3.el8uek.x86_64.conf:6: hwcap directive ignored
+
+  Installing       : libnetfilter_cthelper-1.0.0-15.el8.x86_64                                                                              3/4 
+  Running scriptlet: libnetfilter_cthelper-1.0.0-15.el8.x86_64                                                                              3/4 
+/sbin/ldconfig: /etc/ld.so.conf.d/kernel-5.4.17-2102.201.3.el8uek.x86_64.conf:6: hwcap directive ignored
+
+  Installing       : conntrack-tools-1.4.4-11.el8.x86_64                                                                                    4/4 
+  Running scriptlet: conntrack-tools-1.4.4-11.el8.x86_64                                                                                    4/4 
+/sbin/ldconfig: /etc/ld.so.conf.d/kernel-5.4.17-2102.201.3.el8uek.x86_64.conf:6: hwcap directive ignored
+
+  Verifying        : conntrack-tools-1.4.4-11.el8.x86_64                                                                                    1/4 
+  Verifying        : libnetfilter_cthelper-1.0.0-15.el8.x86_64                                                                              2/4 
+  Verifying        : libnetfilter_cttimeout-1.0.0-11.el8.x86_64                                                                             3/4 
+  Verifying        : libnetfilter_queue-1.0.4-3.el8.x86_64                                                                                  4/4 
+
+Installed:
+  conntrack-tools-1.4.4-11.el8.x86_64         libnetfilter_cthelper-1.0.0-15.el8.x86_64       libnetfilter_cttimeout-1.0.0-11.el8.x86_64        
+  libnetfilter_queue-1.0.4-3.el8.x86_64
+
+Complete!
+[root@k8-node1 ~]# 
+```
+
+Now lets stat the cluster:
+```
+[root@k8-node1 ~]# minikube start
+😄  minikube v1.34.0 on Oracle 8.4
+✨  Automatically selected the docker driver. Other choices: ssh, none
+🛑  The "docker" driver should not be used with root privileges. If you wish to continue as root, use --force.
+💡  If you are running minikube within a VM, consider using --driver=none:
+📘    https://minikube.sigs.k8s.io/docs/reference/drivers/none/
+
+❌  Exiting due to DRV_AS_ROOT: The "docker" driver should not be used with root privileges.
+
+[root@k8-node1 ~]#
+```
+Oops, seems we will need to use non-root user, however i will try to go with root as we are doing testing.
+```
+[root@k8-node1 ~]# minikube start --force
+😄  minikube v1.34.0 on Oracle 8.4
+❗  minikube skips various validations when --force is supplied; this may lead to unexpected behavior
+✨  Automatically selected the docker driver. Other choices: none, ssh
+🛑  The "docker" driver should not be used with root privileges. If you wish to continue as root, use --force.
+💡  If you are running minikube within a VM, consider using --driver=none:
+📘    https://minikube.sigs.k8s.io/docs/reference/drivers/none/
+📌  Using Docker driver with root privileges
+👍  Starting "minikube" primary control-plane node in "minikube" cluster
+🚜  Pulling base image v0.0.45 ...
+💾  Downloading Kubernetes v1.31.0 preload ...
+    > gcr.io/k8s-minikube/kicbase...:  487.85 MiB / 487.90 MiB  99.99% 38.35 Mi
+    > preloaded-images-k8s-v18-v1...:  326.69 MiB / 326.69 MiB  100.00% 23.03 M
+🔥  Creating docker container (CPUs=2, Memory=2200MB) ...
+🐳  Preparing Kubernetes v1.31.0 on Docker 27.2.0 ...
+    ▪ Generating certificates and keys ...
+    ▪ Booting up control plane ...
+    ▪ Configuring RBAC rules ...
+🔗  Configuring bridge CNI (Container Networking Interface) ...
+🔎  Verifying Kubernetes components...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  Enabled addons: storage-provisioner, default-storageclass
+🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+[root@k8-node1 ~]# 
+```
+
+Now it went fine.. And it created cluster with name minikube and in default namespace. This is a single node Kubernets cluster. 
+
+Lets view the kubernet cluster config
+```
+[root@k8-node1 ~]# kubectl config view
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority: /root/.minikube/ca.crt
+    extensions:
+    - extension:
+        last-update: Sat, 16 Nov 2024 22:34:08 EST
+        provider: minikube.sigs.k8s.io
+        version: v1.34.0
+      name: cluster_info
+    server: https://192.168.49.2:8443
+  name: minikube
+contexts:
+- context:
+    cluster: minikube
+    extensions:
+    - extension:
+        last-update: Sat, 16 Nov 2024 22:34:08 EST
+        provider: minikube.sigs.k8s.io
+        version: v1.34.0
+      name: context_info
+    namespace: default
+    user: minikube
+  name: minikube
+current-context: minikube
+kind: Config
+preferences: {}
+users:
+- name: minikube
+  user:
+    client-certificate: /root/.minikube/profiles/minikube/client.crt
+    client-key: /root/.minikube/profiles/minikube/client.key
+[root@k8-node1 ~]#
 ```
