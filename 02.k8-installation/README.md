@@ -1,5 +1,7 @@
 ### K8 installation
 
+Here we will do a Single Node Deplyment (MiniKube K8s Cluster) and in later we will do HA deployments.
+
 Uninstall any prior old versions:
 ```
 [root@k8-node1 ~]# rpm -e docker docker-engine docker.io containerd runc
@@ -529,3 +531,59 @@ users:
     client-key: /root/.minikube/profiles/minikube/client.key
 [root@k8-node1 ~]#
 ```
+
+Now lets interact with Kubernets:
+
+First we will do a small deployment:
+```
+[root@k8-node1 ~]# kubectl create deployment hello-world --image=k8s.gcr.io/echoserver:1.8
+deployment.apps/hello-world created
+[root@k8-node1 ~]# 
+[root@k8-node1 ~]# kubectl get deployment
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+hello-world   0/1     1            0           8s
+[root@k8-node1 ~]# kubectl get deployment
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+hello-world   1/1     1            1           16s
+[root@k8-node1 ~]# 
+```
+
+The ready imples ```1/1``` the first one implies how many container are running and second one says how main containers are there.
+
+Now lets get the pods:
+```
+[root@k8-node1 ~]# kubectl get pods
+NAME                           READY   STATUS    RESTARTS   AGE
+hello-world-775dc5b9d4-dv25p   1/1     Running   0          2m20s
+[root@k8-node1 ~]# 
+```
+Now ltes expose the current pod to external world. And in order to do that we need to create service for this. The service will create proxy point or access point.
+```
+[root@k8-node1 ~]# kubectl expose deployment hello-world --type=LoadBalancer --port=8080
+service/hello-world exposed
+[root@k8-node1 ~]# 
+```
+Now lets see the services 
+```
+[root@k8-node1 ~]# kubectl get services
+NAME          TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+hello-world   LoadBalancer   10.98.243.12   <pending>     8080:30887/TCP   24s
+kubernetes    ClusterIP      10.96.0.1      <none>        443/TCP          14m
+[root@k8-node1 ~]#
+```
+The Cluster-IP is the internal ip and external port is 30887, where 8080 is the service ip
+```
+[root@k8-node1 ~]# minikube service hello-world
+❗  Executing "docker container inspect minikube --format={{.State.Status}}" took an unusually long time: 3.954858985s
+💡  Restarting the docker service may improve performance.
+|-----------|-------------|-------------|---------------------------|
+| NAMESPACE |    NAME     | TARGET PORT |            URL            |
+|-----------|-------------|-------------|---------------------------|
+| default   | hello-world |        8080 | http://192.168.49.2:30887 |
+|-----------|-------------|-------------|---------------------------|
+🎉  Opening service default/hello-world in default browser...
+[root@k8-node1 ~]# Error: no DISPLAY environment variable specified
+```
+We get the error and this is ok, which we can try again from outside the server.
+![alt text](./imgs/img1.jpg)
+
