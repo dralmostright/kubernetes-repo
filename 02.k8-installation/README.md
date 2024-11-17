@@ -604,3 +604,59 @@ deployment.apps "hello-world" deleted
 No resources found in default namespace.
 [root@k8-node1 kubernetes-repo]#
 ```
+NameSpace in Kubernets:
+A K8 cluster can be divided in multiple virtual clusters which are NameSpaces. NameSpaces are virtual Clusters backed by the same Physical Clusters. K8s Objects, such as pods and containers live in NameSpace.
+
+Listing NameSpaces in k8
+```
+[root@k8-node1 kubernetes-repo]# kubectl get namespaces
+NAME              STATUS   AGE
+default           Active   30m
+kube-node-lease   Active   30m
+kube-public       Active   30m
+kube-system       Active   30m
+[root@k8-node1 kubernetes-repo]#
+```
+
+All custers have default namespace. If during any deployment cluster name is not specified, it will take belnog to default namespace. 
+```
+[root@k8-node1 kubernetes-repo]#  kubectl get pods --namespace kube-public
+No resources found in kube-public namespace.
+[root@k8-node1 kubernetes-repo]#  kubectl get pods --namespace kube-system
+NAME                               READY   STATUS    RESTARTS      AGE
+coredns-6f6b679f8f-9w2s6           1/1     Running   0             33m
+etcd-minikube                      1/1     Running   0             33m
+kube-apiserver-minikube            1/1     Running   0             33m
+kube-controller-manager-minikube   1/1     Running   0             33m
+kube-proxy-wk8nv                   1/1     Running   0             33m
+kube-scheduler-minikube            1/1     Running   0             33m
+storage-provisioner                1/1     Running   1 (32m ago)   33m
+[root@k8-node1 kubernetes-repo]#
+```
+To get pods from all namespaces we will use:
+```
+[root@k8-node1 kubernetes-repo]#  kubectl get pods --all-namespaces
+NAMESPACE     NAME                               READY   STATUS    RESTARTS      AGE
+kube-system   coredns-6f6b679f8f-9w2s6           1/1     Running   0             35m
+kube-system   etcd-minikube                      1/1     Running   0             35m
+kube-system   kube-apiserver-minikube            1/1     Running   0             35m
+kube-system   kube-controller-manager-minikube   1/1     Running   0             35m
+kube-system   kube-proxy-wk8nv                   1/1     Running   0             35m
+kube-system   kube-scheduler-minikube            1/1     Running   0             35m
+kube-system   storage-provisioner                1/1     Running   1 (35m ago)   35m
+[root@k8-node1 kubernetes-repo]#
+```
+
+To create a namespace we can use kubectl
+```
+[root@k8-node1 ~]# kubectl create namespace hellowrld
+namespace/hellowrld created
+[root@k8-node1 ~]# kubectl get namespaces
+NAME              STATUS   AGE
+default           Active   37m
+hellowrld         Active   17s
+kube-node-lease   Active   37m
+kube-public       Active   37m
+kube-system       Active   37m
+[root@k8-node1 ~]# 
+```
