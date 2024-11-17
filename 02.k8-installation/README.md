@@ -587,3 +587,20 @@ The Cluster-IP is the internal ip and external port is 30887, where 8080 is the 
 We get the error and this is ok, which we can try again from outside the server.
 ![alt text](./imgs/img1.jpg)
 
+
+And to delete the service and deployment we can do as below:
+```
+[root@k8-node1 kubernetes-repo]# kubectl delete service hello-world
+service "hello-world" deleted
+[root@k8-node1 kubernetes-repo]# 
+[root@k8-node1 kubernetes-repo]# kubectl get services
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   25m
+[root@k8-node1 kubernetes-repo]#
+[root@k8-node1 kubernetes-repo]# kubectl delete deployment hello-world
+deployment.apps "hello-world" deleted
+[root@k8-node1 kubernetes-repo]#
+[root@k8-node1 kubernetes-repo]# kubectl get deployment
+No resources found in default namespace.
+[root@k8-node1 kubernetes-repo]#
+```
