@@ -11,5 +11,3 @@ Must have multiple control planes i.e. multiple master nodes. Load Balance will 
 - In external etcd, we remove the etcd from master nodes and we will create seperate database and we will need to create seperate server and configuration.
 
 Most popular is Stacked Etcd.
-
-
