@@ -39,4 +39,3 @@ Single pod can run on multiple multiple machnes or single machine can run multip
 
 #### kube-proxy
 kube-proxy runs on each node to deal with individual host sub-netting and ensure that the services are available to external parties.
-
