@@ -49,3 +49,18 @@ Kubernets provide three standard interfaces to handle the container runtime to h
 ![alt text](./imgs/components.png)
 
 There are multiple providers for each interface and own can choose according to their organization needs.
+
+#### Container Runtime Interface(CRI)
+Its the standard interface k8 use to process runtimes. Mostly used are krayo and condtinerd. And now docker cannot be used as CRI
+
+![alt text](./imgs/cri.png)
+
+#### Container Network Interface(CNI)
+Defines how networking should be defined for k8 below are the CNI and there are multiple providers.
+
+![alt text](./imgs/crn.png)
+
+#### Container Storage Interface(CSI)
+Specify how storage is provided to k8.
+
+![alt text](./imgs/csi.png)
