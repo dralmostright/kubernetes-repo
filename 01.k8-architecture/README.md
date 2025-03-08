@@ -7,6 +7,9 @@ Mater node is responsible for cluster management and its entry point for overall
 
 ![alt text](./imgs/img01.jpg)
 
+![alt text](./imgs/arch.png)
+
+
 Above diagram depicts a high level architecture of the kubernetes architecture.
 
 The end user can submit the request to k8-cluster either by CLI or using API's or K8 UI dashboard which will be entertained by the Master node. The master node has multiple components like scheduler, api-Server, key-value pair store (etcd), contoller and combination is called the control plane. 
@@ -39,3 +42,10 @@ Single pod can run on multiple multiple machnes or single machine can run multip
 
 #### kube-proxy
 kube-proxy runs on each node to deal with individual host sub-netting and ensure that the services are available to external parties.
+
+### Kubernetes Standrad Interfaces
+Kubernets provide three standard interfaces to handle the container runtime to handle runtime, network and storage:
+
+![alt text](./imgs/components.png)
+
+There are multiple providers for each interface and own can choose according to their organization needs.
